@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Connection.cs" />
+    <Compile Include="DdzNetMsg.cs" />
     <Compile Include="IMsg.cs" />
     <Compile Include="MsgParser.cs" />
     <Compile Include="NetWork.cs" />

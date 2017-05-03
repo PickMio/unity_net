@@ -30,8 +30,15 @@ namespace net_work
         public bool send_msg(IMsg msg)
         {
             Byte[] message = msg.encode();
-            send_buffer_.put_msg(message);
-            return false;
+            //send_buffer_.put_msg(message);
+            int sz = peer_.Send(message);
+            if (sz != message.Length)
+            {
+                Logger.log("error, send length is not match!");
+                return false;
+            }
+
+            return true;
         }
         /// <summary>
         /// 发送线程
@@ -102,11 +109,11 @@ namespace net_work
         }
         public void on_connected()
         {
-            Logger.log("connect to server success\n");
-            string data = "good job";
-            Byte[] msg = Encoding.UTF8.GetBytes(data);
+            //Logger.log("connect to server success\n");
+            //string data = "good job";
+            //Byte[] msg = Encoding.UTF8.GetBytes(data);
             
-            peer_.Send(msg);
+            //peer_.Send(msg);
             //log connected
         }
         public static void ConnectCallback(IAsyncResult ar)
