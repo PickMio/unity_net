@@ -45,7 +45,6 @@ namespace net_work
         /// </summary>
         public void send_loop()
         {
-
         }
 
         /// <summary>
