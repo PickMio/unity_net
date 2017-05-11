@@ -29,31 +29,37 @@ namespace net_work
         /// 将数据放入缓冲区
         /// </summary>
         /// <param name="msg">消息的byte数组</param>
+        /// <param name="sz">消息的实际长度</param>
         /// <returns>成功返回true, 失败返回false</returns>
-        public bool put_msg(Byte[] msg)
+        public bool put_msg(Byte[] msg, int sz)
         {
             lock (lock_)
             {
-                Logger.log("before put msg lock");
+                if (sz > msg.Length)
+                {
+                    //log error 发送参数sz不对
+                    return false;
+                }
+                
                 int free_sz = max_buff_sz_ - (end_pos_ - start_pos_);
 
                 //buffer不够放
-                if (msg.Length > free_sz)
+                if (sz > free_sz)
                 {
                     //log errror, buffer is full
                     return false;
                 }
 
                 //数据尾端到最大buff不够装下msg , 需要移动数据到包头, 再添加msg
-                if (msg.Length > max_buff_sz_ - end_pos_)
+                if (sz > max_buff_sz_ - end_pos_)
                 {
                     //log 发送缓冲区超出限制
                     move_buff_to_head();
                 }
 
-                msg.CopyTo(buffer_, end_pos_);
-                end_pos_ += msg.Length;
-                System.Console.WriteLine("put msg success, msglen[{0}] startpos[{1}] endpos[{2}]\n\n\n", msg.Length, start_pos_, end_pos_);
+                Array.Copy(msg, 0, buffer_, end_pos_, sz);                
+                end_pos_ += sz;
+                //System.Console.WriteLine("put msg success, msglen[{0}] startpos[{1}] endpos[{2}]\n\n\n", sz, start_pos_, end_pos_);
                 return true;
 
             }
@@ -65,19 +71,35 @@ namespace net_work
         /// <param name="sz">所需要的消息长度, 多少字节</param>
         /// <returns>成功返回获取的字符数, 失败返回null</returns>
        
-        public Byte[] get_msg(int sz)
+        public Byte[] get_msg(int sz, bool send = false)
         {
             lock (lock_)
             {
-                if (end_pos_ - start_pos_ < sz)
+                int total = end_pos_ - start_pos_;
+
+                if (0 == total)
                 {
-                    //log error 还没有需要的数据
+                    //一字节数据都没有
                     return null;
+                }
+                if ( total < sz)
+                {                    
+                    if (false == send)
+                    {
+                        //log error 还没有需要的数据
+                        return null;
+                    }
+
+                    sz = end_pos_ - start_pos_;                    
                 }
                 Byte[] msg = new Byte[sz];
                 Array.Copy(buffer_, start_pos_, msg, 0, sz);
                 start_pos_ += sz;
                 System.Console.WriteLine("after get msg[{0}] startpos[{1}] endpos[{2}]\n\n\n", sz, start_pos_, end_pos_);
+                if (start_pos_ == end_pos_)
+                {
+                    start_pos_ = end_pos_ = 0;
+                }                
                 return msg;
             }
         }

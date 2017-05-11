@@ -7,32 +7,11 @@ using System.Collections;
 
 namespace net_work
 {
-    public class DdzNetMsg
+    namespace DdzNetMsg
     {
-        public class Header : IMsg
+        class Header : IHeader 
         {
-            public short type
-            {
-                get
-                {
-                    return type_;
-                }
-                set
-                {
-                    type_ = value;
-                }
-            }
-            public short length 
-            {
-                get
-                {
-                    return length_;
-                }
-                set
-                {
-                    length_ = value;
-                }
-            }
+            
             public Header()
             {
                 identity_ = 0x05;
@@ -41,7 +20,27 @@ namespace net_work
                 version_   = 0x03;
                 reserve_ = 0x00;
                 type_ = 0x00;
+
+                //每个header 类型都要设置包头大小
+                head_size_ = 8;
+
             }
+            public int type
+            {
+                set
+                {
+                    type_ = (short)value;
+                }
+            }
+            public int length 
+            {
+                set
+                {
+                    length_ = (short)value;
+                }
+            }
+            
+            
             private byte identity_;
             private byte encode_;
             private short length_;
@@ -51,7 +50,8 @@ namespace net_work
             public override Byte[] encode()
             {
 
-
+                length_ = (short)(body_size + head_size);
+                type_ = (short)message_type;
                 //Encoding.ASCII.GetBytes
                 Byte[] blength = BitConverter.GetBytes(length_);
                 Array.Reverse(blength);
@@ -71,19 +71,45 @@ namespace net_work
                 
                 return arr;
             }
-            override public IMsg decode()
+            //decode 后要给 type 和size 赋值
+            override public void decode()
             {
-                return null;
+                identity_ = message[0];
+                encode_ = message[1];
+
+                Byte[] blen = new Byte[2];
+                Array.Copy(message, 2, blen, 0, 2);
+                Array.Reverse(blen);
+                length_ = BitConverter.ToInt16(blen, 0);
+                
+                version_ = message[4];
+                reserve_ = message[5];
+
+                Byte[] btype = new Byte[2];
+                Array.Copy(message, 6, btype , 0, 2);
+                Array.Reverse(btype);
+                type_ = BitConverter.ToInt16(btype, 0);
+                body_size = length_ - head_size;
+                message_type = type_;
+                System.Console.WriteLine("identi {0} encode {1} length{2} version{3} reserve{4} type{5:X}", identity_, encode_, body_size, version_, reserve_, type_);
+
+                
 
             }
         }
-        public class Authen_Req: Header
+        class Authen_Req:IMsg 
         {
             public Authen_Req()
             {
-                type = 0xA0;
+                size_ = 56;
+                type_ = 0xA0;
+
             }
-            override public Byte[] encode()
+            public override IMsg create_obj()
+            {
+                return new Authen_Req();
+            }
+            public override Byte[] encode()
             {
                 
                 Byte[] buserid = BitConverter.GetBytes(userid_);
@@ -106,24 +132,24 @@ namespace net_work
                 bpasswd = msg.ToArray<byte>();
                 Byte[] blogin_type = BitConverter.GetBytes(login_type_);
 
-                int hsz = base.length;
-                //int sz = base.length + buserid.Length + broomid.Length + bpasswd.Length + blogin_type.Length;
+                int hsz = 8; 
                 int sz = 56;
-                base.length = (short)sz;
 
-                Byte[] header = base.encode();
                 Byte[] arr = new Byte[sz];
-                header.CopyTo(arr, 0);
-                buserid.CopyTo(arr, hsz);
-                broomid.CopyTo(arr, hsz + buserid.Length);
-                bpasswd.CopyTo(arr, hsz + buserid.Length + broomid.Length);
+                buserid.CopyTo(arr, 0);
+                broomid.CopyTo(arr, buserid.Length);
+                bpasswd.CopyTo(arr, buserid.Length + broomid.Length);
                 blogin_type.CopyTo(arr, 52);
 
                 return arr;
             }
-            override public IMsg decode()
+            override public void decode()
             {
-                return null;
+                
+
+            }
+            override public void process()
+            {
 
             }
             private Int32 userid_;
@@ -156,11 +182,21 @@ namespace net_work
             }
 
         }
-        public class SitdownReq: Header
+        class SitdownReq:IMsg 
         {
             public SitdownReq()
             {
-                type = 0xA4;
+                type_ = 0xA4;
+                size_ = 24;
+
+            }
+            public override IMsg create_obj()
+            {
+                return new SitdownReq();
+            }
+            override public void process()
+            {
+
             }
 
             override public Byte[] encode()
@@ -168,11 +204,10 @@ namespace net_work
                 Byte[] bbuserid = BitConverter.GetBytes(bind_userid);
                 Byte[] bbtnum = BitConverter.GetBytes(table_num);
                 Byte[] bbtextra = BitConverter.GetBytes(table_extra);
-                int hsz = base.length;
-                int sz = 24;
-                base.length = (short)sz;
+                int hsz = 8;//header.get_head_size();
+                int sz = 24;// header.get_body_size();
 
-                Byte[] header = base.encode();
+                Byte[] header = null;//base.encode();
                 Byte[] arr = new Byte[sz];
                 header.CopyTo(arr, 0);
                 bbuserid.CopyTo(arr, hsz);
@@ -180,38 +215,47 @@ namespace net_work
                 bbtextra.CopyTo(arr, hsz + bbuserid.Length + bbtnum.Length);
                 return arr;
             }
-            override public IMsg decode()
+            override public void decode()
             {
-                return null;
+                
             }
             public int bind_userid = 0;
             public int table_num = 0;
             public ushort table_extra = 0;
 
         }
-        public class ReadyReq: Header
+        class ReadyReq:IMsg 
         {
             public ReadyReq()
             {
-                type = 0xA9;
+                type_ = 0xA9;
+                size_ = 10;
+
+            }
+            override public void process()
+            {
+
+            }
+            public override IMsg create_obj()
+            {
+                return new ReadyReq();
             }
 
             override public Byte[] encode()
             {
                 Byte[] brtype = BitConverter.GetBytes(ready_type);
-                int hsz = base.length;
+                int hsz = 8;//header.get_head_size();
                 int sz = 10;
-                base.length = (short)sz;
 
-                Byte[] header = base.encode();
+                Byte[] header = null;// header.encode();
                 Byte[] arr = new Byte[sz];
                 header.CopyTo(arr, 0);
                 brtype.CopyTo(arr, hsz);
                 return arr;
             }
-            override public IMsg decode()
+            override public void decode()
             {
-                return null;
+                
             }
             public short ready_type = 0;
 

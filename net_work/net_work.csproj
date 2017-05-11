@@ -46,6 +46,7 @@
     <Compile Include="IMsg.cs" />
     <Compile Include="MsgParser.cs" />
     <Compile Include="NetWork.cs" />
+    <Compile Include="NetWorkUtils.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SocketBuffer.cs" />

@@ -33,7 +33,7 @@ namespace net_work
                 for (int c = 0; c < times; ++c)
                 //for (; ; )
                 {
-                    if (buffer.put_msg(f))
+                    if (buffer.put_msg(f, f.Length))
                     {
                         Logger.log("put msg ok");
 
@@ -67,6 +67,7 @@ namespace net_work
         }
         static void test(string[] args)
         {
+            /*
             if (args.Length < 3)
             {
                 Logger.log("usage:\n name ip port userid\n example: net_work 10.0.160.115 16441 30012");
@@ -88,9 +89,20 @@ namespace net_work
                 return;
             }
 
+            */
+            /*
+            string ip = "92.11.11.12";
+            //string ip = "10.0.160.115";
+            int port = 16441;
+            int id = 30120;
 
             Connection conn = new Connection();
-            conn.connect_to(ip, port, 3);
+            bool ret = conn.connect_to(ip, port, 3);
+            if (false == ret)
+            {
+                Logger.log("connect to server fail!");
+                return;
+            }
             DdzNetMsg.Authen_Req req = new DdzNetMsg.Authen_Req();
             req.login_type = (char)2;
             req.passwd = "670b14728ad9902aecba32e22fa4f6bd";
@@ -105,12 +117,31 @@ namespace net_work
 
             DdzNetMsg.ReadyReq rreq = new DdzNetMsg.ReadyReq();
             conn.send_msg(rreq);
+            */
+        }
+
+        static void test_frame()
+        {
+            NetWork nt = new NetWork();
+            //if ( null == nt.connect("q.pickmio.com", 7737) )
+            if ( null == nt.connect("10.0.160.115", 16441) )
+            {
+                Logger.log("connect to server fail");
+                return;
+            }
+            nt.start();
+           
+
+            
+
+
         }
         static void Main(string[] args)
         {
             //test( args);
-            test_buffer();
-            //System.Console.Read();
+            test_frame();
+            //test_buffer();
+            System.Console.Read();
         }
     }
 }
