@@ -122,7 +122,8 @@ namespace net_work
 
         static void test_frame()
         {
-            NetWork nt = new NetWork();
+            /*
+            NetWork nt = new NetWork(this);
             //if ( null == nt.connect("q.pickmio.com", 7737) )
             if ( null == nt.connect("10.0.160.115", 16441) )
             {
@@ -130,6 +131,10 @@ namespace net_work
                 return;
             }
             nt.start();
+            */
+            DDZGameLogic logic = new DDZGameLogic();
+            logic.init();
+            logic.start();
            
 
             

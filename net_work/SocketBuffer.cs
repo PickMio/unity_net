@@ -33,7 +33,7 @@ namespace net_work
         /// <returns>成功返回true, 失败返回false</returns>
         public bool put_msg(Byte[] msg, int sz)
         {
-            lock (lock_)
+            //lock (lock_)
             {
                 if (sz > msg.Length)
                 {
@@ -73,7 +73,7 @@ namespace net_work
        
         public Byte[] get_msg(int sz, bool send = false)
         {
-            lock (lock_)
+            //lock (lock_)
             {
                 int total = end_pos_ - start_pos_;
 

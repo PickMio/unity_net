@@ -132,7 +132,6 @@ namespace net_work
                 bpasswd = msg.ToArray<byte>();
                 Byte[] blogin_type = BitConverter.GetBytes(login_type_);
 
-                int hsz = 8; 
                 int sz = 56;
 
                 Byte[] arr = new Byte[sz];

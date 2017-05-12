@@ -47,6 +47,7 @@ namespace net_work
 
         }
         //给逻辑线程的发送接口
+        //TODO 把装包放在接收发送线程
         public bool send_msg(IHeader h, IMsg msg)
         {
             // TODO 这里可以考虑把消息放入msg,在msg malloc 时把头结点的长度包含进来

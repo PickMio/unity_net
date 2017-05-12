@@ -95,6 +95,14 @@ namespace net_work
         //每个消息都有个默认类型值, 构造函数式赋值
         protected int type_;
         protected int size_;
+        //消息所在的连接ID
+        protected int sock_id_;
+
+        public int sock_id
+        {
+            get { return sock_id_; }
+            set { sock_id_ = value; }
+        }
     }
 
     /// <summary>
