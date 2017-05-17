@@ -4,6 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Runtime.InteropServices;
+using System.IO;
+
+using MsgPack;
+using MsgPack.Serialization;
+
 
 //C# instructions https://docs.microsoft.com/zh-cn/dotnet/articles/csharp/
 //threads https://msdn.microsoft.com/zh-cn/library/system.threading.manualresetevent(v=vs.110).aspx
@@ -11,6 +17,7 @@ using System.Threading;
 //collections https://msdn.microsoft.com/zh-cn/library/mt654013.aspx#BKMK_Generic
 namespace net_work
 {
+     
     class Logger
     {
         public static void log(string msg)
@@ -19,7 +26,7 @@ namespace net_work
         }
     }
 
-    class Program
+    public class Program
     {
         static void test_buffer()
         {
@@ -122,16 +129,6 @@ namespace net_work
 
         static void test_frame()
         {
-            /*
-            NetWork nt = new NetWork(this);
-            //if ( null == nt.connect("q.pickmio.com", 7737) )
-            if ( null == nt.connect("10.0.160.115", 16441) )
-            {
-                Logger.log("connect to server fail");
-                return;
-            }
-            nt.start();
-            */
             DDZGameLogic logic = new DDZGameLogic();
             logic.init();
             logic.start();
@@ -141,10 +138,73 @@ namespace net_work
 
 
         }
+
+        public class LoginReq
+        {
+            public string name { get; set; }
+            public string passwd { get; set; }
+            public long platform { get; set; }
+        }
+        public class LoginRsp
+        {
+            public Int32 err { get; set; }
+            public Int32 id { get; set; }
+            public Int32 gender { get; set; }
+            public string sign { get; set; }
+        }
+        static void test_msgpack()
+        {
+            var target = new LoginReq
+            {
+                name = "Justice",
+                passwd = "123456",
+                platform = 110
+            };
+            var stream = new MemoryStream();
+            var serial = MessagePackSerializer.Get<LoginReq>();
+            serial.Pack(stream, target);
+
+            System.Console.WriteLine("packed type is {0}", stream.GetType());
+            Byte[] data = stream.GetBuffer();
+            var stream2 = new MemoryStream();
+            stream2.Write(data, 0, (int)stream.Length);
+            stream2.Position = 0;
+            var msg = serial.Unpack(stream2);
+            System.Console.WriteLine("name:{0} passwd:{1} platform:{2}", msg.name, msg.passwd, msg.platform);
+
+
+        }
+        static public void test_utils()
+        {
+            Byte[] data = new Byte[1024];
+            NetWorkUtils.put_int64( data, 0, (Int64)(-145896365214571));
+            Int64 m;
+            NetWorkUtils.get_int64(data, 0, out m);
+            System.Console.WriteLine("data is {0}", m);
+
+
+            NetWorkUtils.put_int32(data, 0, (Int32)(-877777777));
+            Int32 k;
+            NetWorkUtils.get_int32(data, 0, out k);
+            System.Console.WriteLine("data is {0}", k);
+
+            NetWorkUtils.put_int16( data, 0, (Int16)(-3444));
+            Int16 l;
+            NetWorkUtils.get_int16(data, 0, out l);
+            System.Console.WriteLine("data is {0}", l);
+
+            NetWorkUtils.put_string(data, 0, "我们是 gameobject");
+            string s;
+            NetWorkUtils.get_string(data, out s, 0,6);
+            System.Console.WriteLine("data is {0}", s);
+
+        }
         static void Main(string[] args)
         {
             //test( args);
             test_frame();
+            //test_msgpack();
+            //test_utils();
             //test_buffer();
             System.Console.Read();
         }
