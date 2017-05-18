@@ -53,6 +53,7 @@ namespace net_work
             bool ret = conn.connect_to(ip, port, timeout);
             if ( !ret)
             {
+                stop = true;
                 //连接失败, 返回kong 
                 return null;
             }

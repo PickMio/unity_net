@@ -65,7 +65,6 @@
   <ItemGroup>
     <Compile Include="frame_work\Connection.cs" />
     <Compile Include="DDZGameLogic.cs" />
-    <Compile Include="frame_work\DdzNetMsg.cs" />
     <Compile Include="frame_work\IMsg.cs" />
     <Compile Include="frame_work\MainLogic.cs" />
     <Compile Include="frame_work\MsgParser.cs" />
