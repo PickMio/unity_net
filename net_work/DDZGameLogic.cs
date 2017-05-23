@@ -23,7 +23,7 @@ namespace net_work
         {
             Logger.log("on timer");
             logic.OnLoginReq login = new logic.OnLoginReq();
-            login.msg_.name = "jack";
+            login.msg_.name = "詹姆斯";
             login.msg_.passwd = "123456";
             login.msg_.platform = 18;
             

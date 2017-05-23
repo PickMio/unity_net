@@ -53,11 +53,10 @@ namespace net_work
             // TODO 这里可以考虑把消息放入msg,在msg malloc 时把头结点的长度包含进来
           
             // message 要先encode, 算出包体大小, 再encode 包头
-            Byte[] message = msg.encode();
             h.message_type = msg.type;
+            Byte[] message = msg.encode();
             h.body_size = msg.size;
             Byte[] header = h.encode();
-            ;
            
             Byte[] data = new Byte[header.Length + message.Length];
             header.CopyTo(data, 0);

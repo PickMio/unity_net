@@ -69,7 +69,7 @@ namespace net_work.protocols
         {
             public string name { get; set; }
             public string passwd { get; set; }
-            public long platform { get; set; }
+            public Int32 platform { get; set; }
         }
         public class LoginRsp
         {

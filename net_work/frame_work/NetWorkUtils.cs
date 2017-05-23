@@ -141,7 +141,7 @@ namespace net_work
         /// <returns></returns>
         public static bool put_int16(Byte[]src, int dest, Int16 data, bool reverse = false)
         {
-            if (src.Length <= dest + 2)
+            if (src.Length < dest + 2)
             {
                 return false;
             }
@@ -156,7 +156,7 @@ namespace net_work
         }
         public static bool put_int32(Byte[]src, int dest, Int32 data, bool reverse = false)
         {
-            if (src.Length <= dest + 4)
+            if (src.Length < dest + 4)
             {
                 return false;
             }
@@ -171,7 +171,7 @@ namespace net_work
         }
         public static bool put_int64(Byte[]src, int dest, Int64 data, bool reverse = false)
         {
-            if (src.Length <= dest + 8)
+            if (src.Length < dest + 8)
             {
                 return false;
             }
@@ -186,7 +186,7 @@ namespace net_work
         }
         public static bool put_string(Byte[]src, int dest, string data, bool reverse = false)
         {
-            if (src.Length <= dest + data.Length )
+            if (src.Length < dest + data.Length )
             {
                 return false;
             }
