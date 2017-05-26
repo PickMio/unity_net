@@ -67,6 +67,10 @@ namespace net_work
         
         public Byte[] message
         {
+            get
+            {
+                return msg_;
+            }
             set
             {
                 msg_ = (Byte[])value.Clone();
@@ -86,6 +90,10 @@ namespace net_work
             get
             {
                 return size_;
+            }
+            set
+            {
+                size_ = value;
             }
 
         }

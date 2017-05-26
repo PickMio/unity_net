@@ -10,7 +10,7 @@ namespace net_work
     {
         public static bool get_byte(Byte[] src, int start, out Byte data)
         {
-            if (src.Length <= start + 1)
+            if (src.Length < start + 1)
             {
                 data = (Byte)0;
                 return false;
@@ -22,7 +22,7 @@ namespace net_work
         public static bool get_int16(Byte[] src, int start, out Int16 data, bool reverse = false)
         {
             data = 0;
-            if (src.Length <= start + 2)
+            if (src.Length < start + 2)
             {
                 return false;
             }
@@ -44,7 +44,7 @@ namespace net_work
         public static bool get_int32(Byte[] src, int start, out Int32 data, bool reverse = false)
         {
             data = 0;
-            if (src.Length <= start + 4)
+            if (src.Length < start + 4)
             {
                 return false;
             }
@@ -72,7 +72,7 @@ namespace net_work
         {
 
             data = 0;
-            if (src.Length <= start + 8)
+            if (src.Length < start + 8)
             {
                 return false;
             }

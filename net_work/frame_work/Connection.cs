@@ -94,6 +94,7 @@ namespace net_work
                 return data;
             }
 
+            data.size = header.body_size;
             data.decode();
             return data;
         }

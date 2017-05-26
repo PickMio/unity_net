@@ -13,8 +13,10 @@ namespace net_work
         // 在这里面注册所有消息
         public override void reg_msg()
         {
-            IMsg login = new logic.OnLoginReq();
-            register_message(login);
+            IMsg login_req = new logic.OnLoginReq();
+            register_message(login_req);
+            IMsg login_rsp = new logic.OnLoginRsp();
+            register_message(login_rsp);
 
         }
 
@@ -23,9 +25,9 @@ namespace net_work
         {
             Logger.log("on timer");
             logic.OnLoginReq login = new logic.OnLoginReq();
-            login.msg_.name = "詹姆斯";
-            login.msg_.passwd = "123456";
-            login.msg_.platform = 18;
+            login.login_msg_.name = "詹姆斯";
+            login.login_msg_.passwd = "123456";
+            login.login_msg_.platform = 18;
             
             send_msg(ddz_svr_, login);
 
